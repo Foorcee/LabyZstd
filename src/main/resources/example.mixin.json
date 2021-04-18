@@ -3,11 +3,13 @@
   "package": "com.example.addon.mixin",
   "compatibilityLevel": "JAVA_8",
   "refmap": "example.refmap.json",
-  "verbose": false,
+  "verbose": true,
   "injectors": {
     "defaultRequire": 1
   },
-  "client": [
-    "ExampleMixin"
+  "mixins": [
+    "ExampleMixin",
+    "DecoderMixin",
+    "EncoderMixin"
   ]
 }

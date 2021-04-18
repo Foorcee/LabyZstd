@@ -89,6 +89,7 @@ dependencies {
     compile("org.ow2.asm:asm-commons:6.2") { transitive = false }
     compile("org.spongepowered:mixin:0.8.2") { transitive = false }
     compile("net.minecraft:launchwrapper:1.12") { transitive = false }
+    compile("com.github.luben:zstd-jni:1.4.9-5") {transitive = false}
 }
 
 jar {
