@@ -1,4 +1,4 @@
-package com.example.addon.compression;
+package de.foorcee.labymod.compression.addon.compression;
 
 import net.minecraft.network.NettyCompressionDecoder;
 import net.minecraft.network.NettyCompressionEncoder;

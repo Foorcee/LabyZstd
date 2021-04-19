@@ -1,6 +1,7 @@
-package com.example.addon.compression;
+package de.foorcee.labymod.compression.addon.compression;
 
 import com.github.luben.zstd.Zstd;
+import de.foorcee.labymod.compression.addon.SessionSettings;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.network.NettyCompressionEncoder;
@@ -29,8 +30,9 @@ public class MinecraftZstdCompressionEncoder extends NettyCompressionEncoder {
             byteBufIn.readBytes(data);
             packetBuffer.writeVarInt(data.length);
 
-            byte[] compress = Zstd.compress(data);
+            byte[] compress = Zstd.compress(data, level);
             packetBuffer.writeBytes(compress);
+            SessionSettings.COMPRESSION_RATE.add((double) size / compress.length);
         }
     }
 

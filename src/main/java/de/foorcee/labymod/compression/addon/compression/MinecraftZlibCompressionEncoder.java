@@ -1,5 +1,6 @@
-package com.example.addon.compression;
+package de.foorcee.labymod.compression.addon.compression;
 
+import de.foorcee.labymod.compression.addon.SessionSettings;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.network.NettyCompressionEncoder;
@@ -15,7 +16,6 @@ public class MinecraftZlibCompressionEncoder extends NettyCompressionEncoder {
         int uncompressed = byteBufIn.readableBytes();
         super.encode(channelHandlerContext, byteBufIn, byteBufOut);
         int compressed = byteBufOut.readableBytes();
-        double rate = (double) uncompressed / compressed;
-//        System.out.println("compress rate: "+ rate);
+        SessionSettings.COMPRESSION_RATE.add((double) uncompressed / compressed);
     }
 }

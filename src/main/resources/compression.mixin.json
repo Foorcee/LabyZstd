@@ -1,8 +1,8 @@
 {
   "required": true,
-  "package": "com.example.addon.mixin",
+  "package": "de.foorcee.labymod.compression.addon.mixin",
   "compatibilityLevel": "JAVA_8",
-  "refmap": "example.refmap.json",
+  "refmap": "compression.refmap.json",
   "verbose": true,
   "injectors": {
     "defaultRequire": 1

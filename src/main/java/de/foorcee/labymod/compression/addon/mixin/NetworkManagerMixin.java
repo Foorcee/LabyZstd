@@ -1,8 +1,9 @@
-package com.example.addon.mixin;
+package de.foorcee.labymod.compression.addon.mixin;
 
-import com.example.addon.ExampleAddon;
-import com.example.addon.compression.CompressionFactory;
-import com.example.addon.compression.CompressionType;
+import de.foorcee.labymod.compression.addon.LabyCompressionAddon;
+import de.foorcee.labymod.compression.addon.SessionSettings;
+import de.foorcee.labymod.compression.addon.compression.CompressionFactory;
+import de.foorcee.labymod.compression.addon.compression.CompressionType;
 import io.netty.channel.Channel;
 import net.minecraft.network.NettyCompressionDecoder;
 import net.minecraft.network.NettyCompressionEncoder;
@@ -19,8 +20,8 @@ public class NetworkManagerMixin {
 
     @Overwrite
     public void setCompressionThreshold(int threshold) {
-        int level = ExampleAddon.LEVEL;
-        CompressionType type = ExampleAddon.COMPRESSION_TYPE;
+        int level = SessionSettings.SESSION_COMPRESSION_LEVEL;
+        CompressionType type = SessionSettings.SESSION_COMPRESSION_TYPE;
 
         System.out.println("set compression " + threshold);
 

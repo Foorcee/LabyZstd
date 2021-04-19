@@ -1,12 +1,12 @@
-package com.example.addon.compression;
+package de.foorcee.labymod.compression.addon.compression;
 
 import com.github.luben.zstd.Zstd;
+import de.foorcee.labymod.compression.addon.SessionSettings;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.DecoderException;
 import net.minecraft.network.NettyCompressionDecoder;
-import net.minecraft.network.NettyCompressionEncoder;
 import net.minecraft.network.PacketBuffer;
 
 import java.util.List;
@@ -43,6 +43,7 @@ public class MinecraftZstdCompressionDecoder extends NettyCompressionDecoder {
 
                 byte[] uncompress = Zstd.decompress(data, uncompressedSize);
                 list.add(Unpooled.wrappedBuffer(uncompress));
+                SessionSettings.DECOMPRESSION_RATE.add((double) uncompress.length / data.length);
             } catch (Exception ex) {
                 ex.printStackTrace();
                 throw ex;

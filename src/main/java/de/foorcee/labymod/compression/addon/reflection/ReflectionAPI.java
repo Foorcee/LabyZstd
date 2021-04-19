@@ -1,4 +1,4 @@
-package com.example.addon.reflection;
+package de.foorcee.labymod.compression.addon.reflection;
 
 import sun.reflect.ReflectionFactory;
 
@@ -6,7 +6,6 @@ import java.lang.reflect.*;
 import java.util.HashMap;
 import java.util.Map;
 
-@Deprecated
 public class ReflectionAPI {
 	private static Map<String, Field> fields = new HashMap<>();
 	private static Map<String, Method> methods = new HashMap<>();

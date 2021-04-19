@@ -1,6 +1,7 @@
 {
-  "name": "Example Addon",
+  "name": "Compression Addon",
   "uuid": "%uuid%",
-  "mainClass": "com.example.addon.ExampleAddon",
-  "transformerClass": "com.example.addon.ExampleAddonTransformer"
+  "mainClass": "de.foorcee.labymod.compression.addon.LabyCompressionAddon",
+  "transformerClass": "de.foorcee.labymod.compression.addon.CompressionAddonTransformer",
+  "icon": "https://upload.wikimedia.org/wikipedia/en/thumb/b/ba/Zstandard_logo.png/220px-Zstandard_logo.png"
 }
