@@ -9,14 +9,14 @@ public class CompressionFactory {
         if (type == CompressionType.ZSTD) {
             return new MinecraftZstdCompressionDecoder(threshold);
         }
-        return new NettyCompressionDecoder(threshold);
+        return new MinecraftZlibCompressionDecoder(threshold);
     }
 
     public static NettyCompressionEncoder getEncoder(CompressionType type, int threshold, int level) {
         if (type == CompressionType.ZSTD) {
             return new MinecraftZstdCompressionEncoder(threshold, level);
         }
-        return new NettyCompressionEncoder(threshold);
+        return new MinecraftZlibCompressionEncoder(threshold);
     }
 
 }
