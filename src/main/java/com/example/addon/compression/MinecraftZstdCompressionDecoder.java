@@ -1,4 +1,4 @@
-package com.example.addon.mixin;
+package com.example.addon.compression;
 
 import com.github.luben.zstd.Zstd;
 import io.netty.buffer.ByteBuf;
@@ -6,22 +6,21 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.DecoderException;
 import net.minecraft.network.NettyCompressionDecoder;
+import net.minecraft.network.NettyCompressionEncoder;
 import net.minecraft.network.PacketBuffer;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 
 import java.util.List;
 
-@Mixin(NettyCompressionDecoder.class)
-public class DecoderMixin {
+public class MinecraftZstdCompressionDecoder extends NettyCompressionDecoder {
 
-    @Shadow
     private int threshold;
 
-    @Overwrite
+    public MinecraftZstdCompressionDecoder(int threshold) {
+        super(threshold);
+        this.threshold = threshold;
+    }
+
+    @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf byteBuf, List<Object> list) throws Exception {
         if (byteBuf.readableBytes() == 0) {
             return;
@@ -38,10 +37,21 @@ public class DecoderMixin {
                 throw new DecoderException("Badly compressed packet - size of " + uncompressedSize + " is larger than protocol maximum of " + 2097152);
             }
             byte[] data = new byte[packetBuffer.readableBytes()];
-            packetBuffer.readBytes(data);
 
-            byte[] uncompress = Zstd.decompress(data, uncompressedSize);
-            list.add(Unpooled.wrappedBuffer(uncompress));
+            try {
+                packetBuffer.readBytes(data);
+
+                byte[] uncompress = Zstd.decompress(data, uncompressedSize);
+                list.add(Unpooled.wrappedBuffer(uncompress));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                throw ex;
+            }
         }
+    }
+
+    @Override
+    public void setCompressionThreshold(int threshold) {
+        this.threshold = threshold;
     }
 }

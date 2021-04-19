@@ -1,13 +1,15 @@
 package com.example.addon;
 
 import java.util.List;
+
+import com.example.addon.compression.CompressionType;
 import net.labymod.api.LabyModAddon;
-import net.labymod.settings.elements.BooleanElement;
-import net.labymod.settings.elements.ControlElement.IconData;
 import net.labymod.settings.elements.SettingsElement;
-import net.labymod.utils.Material;
 
 public class ExampleAddon extends LabyModAddon {
+
+  public static CompressionType COMPRESSION_TYPE = CompressionType.ZSTD;
+  public static Integer LEVEL = -1;
 
   @Override
   public void onEnable() {

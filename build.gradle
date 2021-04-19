@@ -17,6 +17,7 @@ buildscript {
 
 plugins {
     id 'de.undercouch.download' version '4.0.0'
+    id "com.github.johnrengelman.shadow" version "4.0.0"
 }
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
@@ -77,6 +78,10 @@ repositories {
     mavenLocal()
 }
 
+configurations {
+    shade
+    compile.extendsFrom shade
+}
 
 dependencies {
     annotationProcessor("org.spongepowered:mixin:0.8.2:processor")
@@ -84,18 +89,25 @@ dependencies {
     minecraft 'com.github.ImpactDevelopment:Vanilla:1.16.5'
     compile(files('libs/lm_api_mc1.16.5.jar'))
 
+    shade("com.github.luben:zstd-jni:1.4.9-5") { transitive = false }
     compile("org.ow2.asm:asm-analysis:6.2") { transitive = false }
     compile("org.ow2.asm:asm-util:6.2") { transitive = false }
     compile("org.ow2.asm:asm-commons:6.2") { transitive = false }
     compile("org.spongepowered:mixin:0.8.2") { transitive = false }
     compile("net.minecraft:launchwrapper:1.12") { transitive = false }
-    compile("com.github.luben:zstd-jni:1.4.9-5") {transitive = false}
 }
 
 jar {
     // Excludes the start file
     exclude("**/launch")
+    configurations.shade.each {
+        dep ->
+            from(project.zipTree(dep)) {
+                exclude 'META-INF', 'META-INF/**'
+            }
+    }
 }
+
 
 task downloadAPI(type: Download) {
     group("labymod")
