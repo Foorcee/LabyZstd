@@ -36,7 +36,7 @@ public class NetworkManagerMixin {
             if (this.channel.pipeline().get("compress") instanceof NettyCompressionEncoder) {
                 ((NettyCompressionEncoder) this.channel.pipeline().get("compress")).setCompressionThreshold(threshold);
             } else {
-                NettyCompressionEncoder encoder = CompressionFactory.getEncoder(type, LabyCompressionAddon.THRESHOLD, level);
+                NettyCompressionEncoder encoder = CompressionFactory.getEncoder(type, threshold, level);
                 System.out.println("Enabled compression " + type + " at level " + level + " " + encoder.getClass().getSimpleName());
                 this.channel.pipeline().addBefore("encoder", "compress", encoder);
             }

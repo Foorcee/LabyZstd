@@ -90,9 +90,6 @@ public class LabyCompressionAddon extends LabyModAddon {
             THRESHOLD = integer;
             getConfig().addProperty("threshold", THRESHOLD);
             saveConfig();
-            if (Minecraft.getInstance().getConnection() != null) {
-                Minecraft.getInstance().getConnection().getNetworkManager().setCompressionThreshold(THRESHOLD);
-            }
         });
 
         list.add(numberElement2);
