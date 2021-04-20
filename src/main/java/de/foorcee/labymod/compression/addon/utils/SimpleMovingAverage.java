@@ -5,6 +5,8 @@ import java.util.Queue;
 
 public class SimpleMovingAverage {
 
+    private static final double ROUND = 10_000;
+
     private final Queue<Double> dataset = new LinkedList<>();
     private final int period;
     private double sum;
@@ -23,7 +25,7 @@ public class SimpleMovingAverage {
     }
 
     public double getMean() {
-        return sum / Math.min(dataset.size(), period);
+        return (Math.round((sum / Math.min(dataset.size(), period)) * ROUND) / ROUND);
     }
 
     public double getSum() {

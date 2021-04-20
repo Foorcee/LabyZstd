@@ -22,31 +22,41 @@ public class MinecraftZstdCompressionDecoder extends NettyCompressionDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf byteBuf, List<Object> list) throws Exception {
-        if (byteBuf.readableBytes() == 0) {
-            return;
-        }
-        PacketBuffer packetBuffer = new PacketBuffer(byteBuf);
-        int uncompressedSize = packetBuffer.readVarInt();
-        if (uncompressedSize == 0) {
-            list.add(packetBuffer.readBytes(packetBuffer.readableBytes()));
-        } else {
-            if (uncompressedSize < this.threshold) {
-                throw new DecoderException("Badly compressed packet - size of " + uncompressedSize + " is below server threshold of " + this.threshold);
+        boolean compressed = false;
+        long start = System.nanoTime();
+        try {
+            if (byteBuf.readableBytes() == 0) {
+                return;
             }
-            if (uncompressedSize > 2097152) {
-                throw new DecoderException("Badly compressed packet - size of " + uncompressedSize + " is larger than protocol maximum of " + 2097152);
+            PacketBuffer packetBuffer = new PacketBuffer(byteBuf);
+            int uncompressedSize = packetBuffer.readVarInt();
+            if (uncompressedSize == 0) {
+                list.add(packetBuffer.readBytes(packetBuffer.readableBytes()));
+            } else {
+                if (uncompressedSize < this.threshold) {
+                    throw new DecoderException("Badly compressed packet - size of " + uncompressedSize + " is below server threshold of " + this.threshold);
+                }
+                if (uncompressedSize > 2097152) {
+                    throw new DecoderException("Badly compressed packet - size of " + uncompressedSize + " is larger than protocol maximum of " + 2097152);
+                }
+                byte[] data = new byte[packetBuffer.readableBytes()];
+
+                try {
+                    packetBuffer.readBytes(data);
+
+                    byte[] uncompress = Zstd.decompress(data, uncompressedSize);
+
+                    list.add(Unpooled.wrappedBuffer(uncompress));
+                    SessionSettings.DECOMPRESSION_RATE.add((double) uncompress.length / data.length);
+                    compressed = true;
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    throw ex;
+                }
             }
-            byte[] data = new byte[packetBuffer.readableBytes()];
-
-            try {
-                packetBuffer.readBytes(data);
-
-                byte[] uncompress = Zstd.decompress(data, uncompressedSize);
-                list.add(Unpooled.wrappedBuffer(uncompress));
-                SessionSettings.DECOMPRESSION_RATE.add((double) uncompress.length / data.length);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                throw ex;
+        } finally {
+            if (compressed) {
+                SessionSettings.COMPRESSION_TIME.add(System.nanoTime() - start);
             }
         }
     }

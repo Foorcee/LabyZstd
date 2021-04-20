@@ -4,11 +4,11 @@ import de.foorcee.labymod.compression.addon.SessionSettings;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.network.NettyCompressionDecoder;
+import net.minecraft.network.PacketBuffer;
 
 import java.util.List;
 
 public class MinecraftZlibCompressionDecoder extends NettyCompressionDecoder {
-
 
     public MinecraftZlibCompressionDecoder(int threshold) {
         super(threshold);
@@ -16,14 +16,15 @@ public class MinecraftZlibCompressionDecoder extends NettyCompressionDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf byteBuf, List<Object> list) throws Exception {
-        int compressed = byteBuf.readableBytes();
+        PacketBuffer packetBuffer = new PacketBuffer(byteBuf);
+        int uncompressed = packetBuffer.readVarInt();
+        int compressed = packetBuffer.readableBytes();
+        packetBuffer.resetReaderIndex();
+        long start = System.nanoTime();
         super.decode(ctx, byteBuf, list);
-        int uncompressed = 0;
-        for (Object o : list) {
-            if (o instanceof ByteBuf) {
-                uncompressed += ((ByteBuf) o).readableBytes();
-            }
+        if (uncompressed != 0) {
+            SessionSettings.COMPRESSION_TIME.add(System.nanoTime() - start);
+            SessionSettings.DECOMPRESSION_RATE.add((double) uncompressed / compressed);
         }
-        SessionSettings.DECOMPRESSION_RATE.add((double) uncompressed / compressed);
     }
 }

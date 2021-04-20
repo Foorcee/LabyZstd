@@ -8,12 +8,16 @@ import net.labymod.api.LabyModAddon;
 import net.labymod.gui.elements.DropDownMenu;
 import net.labymod.settings.elements.*;
 import net.labymod.utils.Material;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.MinecraftGame;
 
 public class LabyCompressionAddon extends LabyModAddon {
 
     public static boolean ENABLED;
     public static CompressionType COMPRESSION_TYPE = CompressionType.ZSTD;
     public static Integer LEVEL = -1;
+    public static boolean DISABLE_ENCODE_COMPRESSION = false;
+    public static Integer THRESHOLD = 256;
 
     @Override
     public void onEnable() {
@@ -42,6 +46,14 @@ public class LabyCompressionAddon extends LabyModAddon {
             LEVEL = -1;
         }
 
+        if (getConfig().has("disableEncodeCompression")) {
+            DISABLE_ENCODE_COMPRESSION = getConfig().get("disableEncodeCompression").getAsBoolean();
+        }
+
+        if (getConfig().has("threshold")) {
+            THRESHOLD = getConfig().get("threshold").getAsInt();
+        }
+
     }
 
     @Override
@@ -63,7 +75,7 @@ public class LabyCompressionAddon extends LabyModAddon {
 
 
         NumberElement numberElement = new NumberElement("Compression Level", new ControlElement.IconData(Material.WATCH), LEVEL);
-
+        numberElement.setMinValue(-1);
         numberElement.addCallback(integer -> {
             LEVEL = integer;
             getConfig().addProperty("compressionLevel", LEVEL);
@@ -71,5 +83,20 @@ public class LabyCompressionAddon extends LabyModAddon {
         });
 
         list.add(numberElement);
+
+        NumberElement numberElement2 = new NumberElement("Compression threshold", new ControlElement.IconData(Material.REDSTONE), THRESHOLD);
+
+        numberElement2.addCallback(integer -> {
+            THRESHOLD = integer;
+            getConfig().addProperty("threshold", THRESHOLD);
+            saveConfig();
+            if (Minecraft.getInstance().getConnection() != null) {
+                Minecraft.getInstance().getConnection().getNetworkManager().setCompressionThreshold(THRESHOLD);
+            }
+        });
+
+        list.add(numberElement2);
+
+        list.add(new BooleanElement("Disable Encode Compression", this, new ControlElement.IconData(Material.LEVER), "disableEncodeCompression", DISABLE_ENCODE_COMPRESSION));
     }
 }

@@ -1,5 +1,6 @@
 package de.foorcee.labymod.compression.addon.module;
 
+import de.foorcee.labymod.compression.addon.LabyCompressionAddon;
 import de.foorcee.labymod.compression.addon.SessionSettings;
 import de.foorcee.labymod.compression.addon.compression.CompressionType;
 import net.labymod.ingamegui.ModuleCategory;
@@ -13,15 +14,16 @@ public class CompressionRateDebugModule extends SimpleTextModule {
     public String[] getValues() {
         return new String[]{
                 SessionSettings.SESSION_COMPRESSION_TYPE.name() + " " + SessionSettings.SESSION_COMPRESSION_LEVEL,
-                SessionSettings.COMPRESSION_RATE.getMean() + "",
-                SessionSettings.DECOMPRESSION_RATE.getMean() + ""
+                (LabyCompressionAddon.DISABLE_ENCODE_COMPRESSION ? "Deaktiviert" : SessionSettings.COMPRESSION_RATE.getMean() + ""),
+                SessionSettings.DECOMPRESSION_RATE.getMean() + "",
+                SessionSettings.FORMAT.format(SessionSettings.COMPRESSION_TIME.getMean()) + "ns"
         };
     }
 
     @Override
     public String[] getDefaultValues() {
         return new String[]{
-                CompressionType.ZLIB.name() + " " + -1, "0", "0"
+                CompressionType.ZLIB.name() + " " + -1, "0", "0", "0ns"
         };
     }
 
@@ -30,7 +32,8 @@ public class CompressionRateDebugModule extends SimpleTextModule {
         return new String[]{
                 "Algorithmus",
                 "Kompressionsrate",
-                "Dekompressionsrate"
+                "Dekompressionsrate",
+                "Dekompressionzeit"
         };
     }
 
